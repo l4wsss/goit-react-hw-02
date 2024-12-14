@@ -2,73 +2,63 @@ import { useEffect, useState } from "react";
 import Description from "../Description/Description";
 import Feedback from "../Feedback/Feedback";
 import Options from "../Options/Options";
+import Notification from "../Notification/Notification";
 
 const App = () => {
-  const [good, setGood] = useState(() => {
-    const savedFeedback = JSON.parse(localStorage.getItem("feedback"));
-    return savedFeedback?.good || 0;
-  });
-
-  const [neutral, setNeutral] = useState(() => {
-    const savedFeedback = JSON.parse(localStorage.getItem("feedback"));
-    return savedFeedback?.neutral || 0;
-  });
-
-  const [bad, setBad] = useState(() => {
-    const savedFeedback = JSON.parse(localStorage.getItem("feedback"));
-    return savedFeedback?.bad || 0;
+  const [option, setOption] = useState(() => {
+    const savedFeedback = localStorage.getItem("feedback");
+    return savedFeedback
+      ? JSON.parse(savedFeedback)
+      : { good: 0, neutral: 0, bad: 0 };
   });
 
   useEffect(() => {
-    const feedbackData = {
-      good,
-      neutral,
-      bad,
-    };
-    localStorage.setItem("feedback", JSON.stringify(feedbackData));
-  }, [good, neutral, bad]);
+    localStorage.setItem("feedback", JSON.stringify(option));
+  }, [option]);
 
-  const handleLeaveFeedback = (option) => {
-    if (option === "good") {
-      setGood(good + 1);
-    } else if (option === "neutral") {
-      setNeutral(neutral + 1);
-    } else if (option === "bad") {
-      setBad(bad + 1);
+  const handleLeaveFeedback = (feedback) => {
+    if (feedback === "good") {
+      setOption({ ...option, good: option.good + 1 });
+    } else if (feedback === "neutral") {
+      setOption({ ...option, neutral: option.neutral + 1 });
+    } else if (feedback === "bad") {
+      setOption({ ...option, bad: option.bad + 1 });
     }
   };
 
   const handleReset = () => {
-    setGood(0);
-    setNeutral(0);
-    setBad(0);
+    setOption({
+      good: 0,
+      neutral: 0,
+      bad: 0,
+    });
   };
 
   const feedbackOptions = ["good", "neutral", "bad"];
 
-  const feedbackTotal = good + bad + neutral;
+  const feedbackTotal = option.good + option.bad + option.neutral;
 
-  const precentPositiveFeedback = Math.round((good / feedbackTotal) * 100);
+  const precentPositiveFeedback = Math.round(
+    (option.good / feedbackTotal) * 100
+  );
 
   return (
     <div>
       <Description />
       <Options
         handleLeaveFeedback={handleLeaveFeedback}
-        options={feedbackOptions}
+        feedbacks={feedbackOptions}
         handleReset={handleReset}
         total={feedbackTotal}
       />
       {feedbackTotal ? (
         <Feedback
-          good={good}
-          neutral={neutral}
-          bad={bad}
+          feedbackData={option}
           total={feedbackTotal}
           precentPositiveFeedback={precentPositiveFeedback}
         />
       ) : (
-        <p>No feedback yet.</p>
+        <Notification>No feedback yet.</Notification>
       )}
     </div>
   );

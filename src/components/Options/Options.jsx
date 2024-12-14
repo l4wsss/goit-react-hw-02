@@ -1,16 +1,16 @@
 import PropTypes from "prop-types";
 import css from "../App/App.module.css";
 
-const Options = ({ handleLeaveFeedback, options, handleReset, total }) => {
+const Options = ({ handleLeaveFeedback, feedbacks, handleReset, total }) => {
   return (
     <>
-      {options.map((option) => (
+      {feedbacks.map((feedback) => (
         <button
           className={css.button}
-          key={option}
-          onClick={() => handleLeaveFeedback(option)}
+          key={feedback}
+          onClick={() => handleLeaveFeedback(feedback)}
         >
-          {option}
+          {feedback}
         </button>
       ))}
 
@@ -27,7 +27,7 @@ Options.propTypes = {
   total: PropTypes.number.isRequired,
   handleReset: PropTypes.func.isRequired,
   handleLeaveFeedback: PropTypes.func.isRequired,
-  options: PropTypes.arrayOf(PropTypes.string).isRequired,
+  feedbacks: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default Options;
